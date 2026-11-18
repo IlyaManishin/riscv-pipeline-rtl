@@ -38,15 +38,15 @@ The main goal of the project is **frequency**: every stage boundary and every ha
 ```
                          ┌─────────────────────── HAZARD UNIT ───────────────────────┐
                          │  rsi_comparator ──► fwd_unit (precalc) ──► hazard_detect  │
-                         └──────▲───────────────────────────────────────────┬────────┘
-                                │ rs1/rs2, rd_E/M/W                         │ stall / flush
+                         └──────▲──────────────────────────────────────────┬─────────┘
+                                │ rs1/rs2, rd_E/M/W                        │ stall / flush
    ┌──────────┐   ┌──────────┐  │ ┌──────────┐   ┌──────────┐   ┌──────────▼┐
    │    IF    │──►│    ID    │──┴►│    EX    │──►│   MEM    │──►│    WB     │
-   │ PC gen   │   │ Decoder  │   │ ALU      │   │ Store    │   │ Load align│
-   │ BRAM IMEM│   │ Imm gen  │   │ Shifter  │   │ pack     │   │ sign-ext  │
-   │          │   │ RegFile  │   │ Branch   │   │ BRAM DMEM│   │ RF write  │
-   │          │   │          │   │ unit     │   │ MMIO mux │   │           │
-   └──────────┘   └──────────┘   └──────────┘   └──────────┘   └───────────┘
+   │ PC gen   │   │ Decoder  │    │ ALU      │   │ Store    │   │ Load align│
+   │ BRAM IMEM│   │ Imm gen  │    │ Shifter  │   │ pack     │   │ sign-ext  │
+   │          │   │ RegFile  │    │ Branch   │   │ BRAM DMEM│   │ RF write  │
+   │          │   │          │    │ unit     │   │ MMIO mux │   │           │
+   └──────────┘   └──────────┘    └──────────┘   └──────────┘   └───────────┘
 ```
 
 | Stage | What happens | Source |
