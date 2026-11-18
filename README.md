@@ -1,6 +1,6 @@
 # rv-nsu — 5-Stage RISC-V RV32I Core @ 142 MHz
 
-A synthesizable 32-bit **RISC-V RV32I** processor core written in SystemVerilog, built from scratch and timing-closed at **142 MHz** on a low-cost Xilinx Artix-7 (speed grade -1). It comes with a complete SoC wrapper (BRAM, UART, GPIO, optional VGA framebuffer), a self-checking simulation environment and a one-command Vivado build flow.
+A synthesizable 32-bit **RISC-V RV32I** processor core written in SystemVerilog, built from scratch and timing-closed at **142 MHz** on a Xilinx Artix-7 (speed grade -1). It comes with a complete SoC wrapper (BRAM, UART, GPIO, optional VGA framebuffer), a self-checking simulation environment and a one-command Vivado build flow.
 
 The main goal of the project is **frequency**: every stage boundary and every hazard path was shaped around the Artix-7 fabric to keep the critical path short, while staying at roughly 1.1k LUTs.
 
@@ -11,7 +11,7 @@ The main goal of the project is **frequency**: every stage boundary and every ha
 | **Fmax (post-route)** | **142 MHz** (7.0 ns), WNS +0.003 ns, WHS +0.082 ns, 0 failing endpoints |
 | **Area** | 1,124 LUTs (5.4%) · 430 FFs (1.0%) · 365 slices (4.5%) · 0 DSP |
 | **Memory** | 8 × RAMB36E1 (16 KB data memory + instruction memory), register file in 44 LUTRAM |
-| **Target boards** | Digilent Basys 3 (`xc7a35tcpg236-1`), Nexys 4 DDR (`xc7a100tcsg324-1`) |
+| **Target boards** | Digilent Basys 3 (`xc7a35tcpg236-1`) |
 | **Tools** | AMD/Xilinx Vivado 2019.2 – 2025.2 (timing results from 2025.2) |
 | **Verification** | Self-checking testbench, 50+ assembly tests, cycle-accurate CSV trace, built-in disassembler |
 
@@ -77,17 +77,11 @@ The BRAM → sign-extend → mux → forward → ALU path is the classic timing 
 **3. Load alignment lives in Writeback.**
 Sign/zero extension and byte/halfword slicing are done in WB, so BRAM read latency never chains into extension logic inside MEM.
 
-**4. Shifter is decoupled from the ALU.**
-A dedicated barrel shifter runs in parallel with the adder/logic unit. A single final mux (`alushift_sel`) picks the result, which avoids cascaded multiplexer stages inside the ALU.
-
-**5. Branch resolution is registered.**
+**4. Branch resolution is registered.**
 The branch outcome (`jfexe`) and target (`jfpc`) are computed in EX but **registered into the EX/MEM stage**, and the PC redirect happens from MEM. This breaks the ALU/comparator → PC mux → fetch loop at the cost of a 2-cycle taken-branch penalty.
 
-**6. Synchronous BRAM fetch without a bubble.**
+**5. Synchronous BRAM fetch without a bubble.**
 `imem_addr = pc_next` and `pc_D` latches `pc_next` on the same edge the BRAM output appears, so instruction and PC stay aligned without extra registers or stall cycles.
-
-**7. Distributed-RAM register file.**
-The 32×32 register file maps to 44 LUTs of dual-port LUTRAM with asynchronous reads, which keeps Decode fast without using block RAM.
 
 ---
 
@@ -241,5 +235,4 @@ The script generates `mem_init_path.svh` and `video_config.svh`, configures the 
 ---
 
 ## License
-
-_Add a license here (e.g. MIT) before publishing._
+- nope
