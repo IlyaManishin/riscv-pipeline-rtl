@@ -36,18 +36,21 @@ The main goal of the project is **frequency**: every stage boundary and every ha
 ## Microarchitecture
 
 ```
-                         ┌─────────────────────── HAZARD UNIT ───────────────────────┐
-                         │  rsi_comparator ──► fwd_unit (precalc) ──► hazard_detect  │
-                         └──────▲──────────────────────────────────────────┬─────────┘
-                                │ rs1/rs2, rd_E/M/W                        │ stall / flush
-   ┌──────────┐   ┌──────────┐  │ ┌──────────┐   ┌──────────┐   ┌──────────▼┐
-   │    IF    │──►│    ID    │──┴►│    EX    │──►│   MEM    │──►│    WB     │
-   │ PC gen   │   │ Decoder  │    │ ALU      │   │ Store    │   │ Load align│
-   │ BRAM IMEM│   │ Imm gen  │    │ Shifter  │   │ pack     │   │ sign-ext  │
-   │          │   │ RegFile  │    │ Branch   │   │ BRAM DMEM│   │ RF write  │
-   │          │   │          │    │ unit     │   │ MMIO mux │   │           │
-   └──────────┘   └──────────┘    └──────────┘   └──────────┘   └───────────┘
+   ┌───────────────────────────────────────────────────────┐
+   │                      HAZARD UNIT                      │
+   │  rsi_comparator ─► fwd_unit ─► hazard_detection_unit  │
+   └────┬──────────────┬──────────────┬──────────────┬─────┘
+        │ stall_pc     │ stall_if_id  │ flush_id_ex  │ flush_ex_mem
+        ▼              ▼              ▼              ▼
+   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐   ┌──────────┐
+   │    IF    │──►│    ID    │──►│    EX    │──►│   MEM    │──►│    WB    │
+   │  PC gen  │   │ Decoder  │   │   ALU    │   │Store pack│   │Load align│
+   │BRAM IMEM │   │ Imm gen  │   │ Shifter  │   │BRAM DMEM │   │ Sign-ext │
+   │          │   │ RegFile  │   │ Br. unit │   │ MMIO mux │   │ RF write │
+   └──────────┘   └──────────┘   └──────────┘   └──────────┘   └──────────┘
 ```
+
+Hazard control is applied only at the front of the pipeline: `stall_pc` freezes the PC (IF) and `stall_if_id` holds the IF/ID register (ID). The back stages (EX, MEM, WB) are never stalled; instead `flush_id_ex` and `flush_ex_mem` turn the instruction entering EX or MEM into a bubble. Forwarding paths are omitted from the diagram; see [Hazard handling](#hazard-handling).
 
 | Stage | What happens | Source |
 | :--- | :--- | :--- |
@@ -238,3 +241,5 @@ The script generates `mem_init_path.svh` and `video_config.svh`, configures the 
 ---
 
 ## License
+
+_Add a license here (e.g. MIT) before publishing._
