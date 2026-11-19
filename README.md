@@ -1,4 +1,4 @@
-# rv-nsu — 5-Stage RISC-V RV32I Core @ 142 MHz
+# 5-Stage RISC-V RV32I Core
 
 A synthesizable 32-bit **RISC-V RV32I** processor core written in SystemVerilog, built from scratch and timing-closed at **142 MHz** on a Xilinx Artix-7 (speed grade -1). It comes with a complete SoC wrapper (BRAM, UART, GPIO, optional VGA framebuffer), a self-checking simulation environment and a one-command Vivado build flow.
 
