@@ -20,3 +20,5 @@ ip/*
 !cfg/*.wcfg
 
 .vscode
+.directory
+PROJECT_CONTEXT.md
